@@ -6,7 +6,7 @@
 docker build -t tp3 .
 ```
 
-## executar dentro da pasta para rodar o container
+## executar dentro da pasta para rodar o contêiner
 ```bash
 docker run -p 5433:5432 -p 8888:8888 -v $(pwd)/notebook/:/app/notebook tp3
 docker run -p 5433:5432 -p 8888:8888 -v $(pwd)/datadir/:/app/datadir -v $(pwd)/notebook/:/app/notebook tp3
