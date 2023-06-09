@@ -1,11 +1,58 @@
-# Defina qual distro do linux vc quer usar
-FROM <linux>
+FROM debian:stable-slim
 
-# Instale as dependencias do SISTEMA OPERACIONAL
-# Exemplo de como seria no ubuntu: RUN apt update && apt install -y python3 python3-pip libpq-dev
+ENV DEBIAN_FRONTEND=noninteractive
 
+# Cria um novo usuário chamado "diunkz", id 1000 (o mesmo user e id da minha máquina)
+RUN useradd -ms /bin/bash diunkz
+
+# Concede permissões de root ao usuário "diunkz" e define a senha 's' para ele
+RUN echo "diunkz ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && echo 'diunkz:s' | chpasswd
+
+# Etapa de instalação e configuração inicial
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    python3 \
+    python3-dev \
+    python3-pip \
+    wget \
+    unzip \
+    postgresql-13 \
+    fdisk \
+    hdparm \
+    smartmontools \
+    && echo 'root:123' | chpasswd \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Etapa que move todos os arquivos da pasta para a pasta app do contêiner
 WORKDIR /app
 COPY . /app
 
-# Sua imagem deve ter o python 3.8+ instalado e o pip
-RUN pip install -r requirements.txt
+# Etapa de configuração do Python e instalação de dependências
+RUN pip3 install --no-cache-dir --upgrade pip \
+    && pip3 install --no-cache-dir -r requirements.txt \
+    && apt-get autoremove -y
+    
+# Download e instalação do tpch-dbgen
+WORKDIR /app/tpch-pgsql
+RUN wget -q https://github.com/electrum/tpch-dbgen/archive/32f1c1b92d1664dba542e927d23d86ffa57aa253.zip -O tpch-dbgen.zip \
+    && unzip -q tpch-dbgen.zip \
+    && mv tpch-dbgen-32f1c1b92d1664dba542e927d23d86ffa57aa253 tpch-dbgen \
+    && rm tpch-dbgen.zip \
+    && chmod -R ugo+w /app
+    #&& chown -R diunkz:root /app/tpch-pgsql/tpch-dbgen
+   
+# Configuração do PostgreSQL
+WORKDIR /app
+USER postgres
+RUN pg_ctlcluster 13 main start \
+    && createuser tpch \
+    && createdb tpchdb \
+    && psql -c "ALTER USER tpch PASSWORD 'pass';" \
+    && psql -c "GRANT ALL PRIVILEGES ON DATABASE tpchdb TO tpch;" \
+    && pg_ctlcluster 13 main stop
+
+# Comando padrão para iniciar o PostgreSQL e manter o contêiner em execução
+CMD pg_ctlcluster 13 main start && tail -f /dev/null
