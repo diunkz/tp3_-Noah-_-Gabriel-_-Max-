@@ -1,2 +1,3 @@
-psycopg2
-jupyter
+psycopg2-binary
+jupyterlab
+mock
