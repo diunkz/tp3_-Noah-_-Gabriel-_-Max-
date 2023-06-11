@@ -42,7 +42,6 @@ RUN wget -q https://github.com/electrum/tpch-dbgen/archive/32f1c1b92d1664dba542e
     && mv tpch-dbgen-32f1c1b92d1664dba542e927d23d86ffa57aa253 tpch-dbgen \
     && rm tpch-dbgen.zip \
     && chmod -R ugo+w /app
-    #&& chown -R diunkz:root /app/tpch-pgsql/tpch-dbgen
    
 # Configuração do PostgreSQL
 WORKDIR /app
