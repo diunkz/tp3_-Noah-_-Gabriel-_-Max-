@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:11.7-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
