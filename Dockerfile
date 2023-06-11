@@ -1,18 +1,20 @@
 FROM debian:11.7-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
+ARG USERNAME=diunkz
 
 # Cria um novo usuário chamado "diunkz", id 1000 (o mesmo user e id da minha máquina)
-RUN useradd -ms /bin/bash diunkz
+RUN useradd -ms /bin/bash $USERNAME
 
 # Concede permissões de root ao usuário "diunkz" e define a senha 's' para ele
-RUN echo "diunkz ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-    && echo 'diunkz:s' | chpasswd
+RUN echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && echo "$USERNAME:s" | chpasswd
 
 # Etapa de instalação e configuração inicial
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
+    nano \
     python3 \
     python3-dev \
     python3-pip \
@@ -34,7 +36,7 @@ COPY . /app
 RUN pip3 install --no-cache-dir --upgrade pip \
     && pip3 install --no-cache-dir -r requirements.txt \
     && apt-get autoremove -y
-    
+
 # Download e instalação do tpch-dbgen
 WORKDIR /app/tpch-pgsql
 RUN wget -q https://github.com/electrum/tpch-dbgen/archive/32f1c1b92d1664dba542e927d23d86ffa57aa253.zip -O tpch-dbgen.zip \
@@ -42,7 +44,9 @@ RUN wget -q https://github.com/electrum/tpch-dbgen/archive/32f1c1b92d1664dba542e
     && mv tpch-dbgen-32f1c1b92d1664dba542e927d23d86ffa57aa253 tpch-dbgen \
     && rm tpch-dbgen.zip \
     && chmod -R ugo+w /app
-   
+
+RUN sed -i 's/local   all             all                                     peer/local   all             all                                     md5/' /etc/postgresql/13/main/pg_hba.conf
+
 # Configuração do PostgreSQL
 WORKDIR /app
 USER postgres
