@@ -58,9 +58,13 @@ WORKDIR /app
 USER postgres
 RUN pg_ctlcluster 13 main start \
     && createuser tpch \
+    && createuser aluno \
     && createdb tpchdb \
+    && createdb banco \
     && psql -c "ALTER USER tpch PASSWORD 'pass';" \
+    && psql -c "ALTER USER tpch PASSWORD 'senhaaluno';" \
     && psql -c "GRANT ALL PRIVILEGES ON DATABASE tpchdb TO tpch;" \
+    && psql -c "GRANT ALL PRIVILEGES ON DATABASE banco TO aluno;" \
     && pg_ctlcluster 13 main stop
 
 USER $USERNAME
