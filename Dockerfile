@@ -66,11 +66,11 @@ RUN pg_ctlcluster 13 main start \
     && createdb tpchdb \
     && createdb banco \
     && psql -c "ALTER USER tpch PASSWORD 'pass';" \
-    && psql -c "ALTER USER tpch PASSWORD 'senhaaluno';" \
+    && psql -c "ALTER USER aluno PASSWORD 'senhaaluno';" \
     && psql -c "GRANT ALL PRIVILEGES ON DATABASE tpchdb TO tpch;" \
     && psql -c "GRANT ALL PRIVILEGES ON DATABASE banco TO aluno;" \
     && pg_ctlcluster 13 main stop
 
-USER $USERNAME
-# Comando padrão para iniciar o jupyter (o link estará na saída do docker run) e iniciar PostgreSQL. O jupyter executando garante que o contêiner fique em execução
-CMD jupyter-lab --no-browser --ip=0.0.0.0 --port=8888 && echo 'postgres' | su - postgres -c "pg_ctlcluster 13 main start"
+
+# Comando para iniciar o PostgreSQL. O segundo comando garante que o contêiner fique em execução.
+CMD pg_ctlcluster 13 main start && tail -f /dev/null
