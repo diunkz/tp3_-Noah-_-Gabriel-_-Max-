@@ -42,7 +42,7 @@ RUN pip3 install --no-cache-dir --upgrade pip \
 # criação da pasta tables, onde ficará o script movie.sql
 RUN mkdir tables
 WORKDIR /app/tables
-RUN wget "https://drive.google.com/uc?export=download&id=1W6wovSsVu4B0OIo_tsSBBHi8WRKQqnat" -O arquivo.sql
+RUN wget "https://drive.google.com/uc?export=download&id=1W6wovSsVu4B0OIo_tsSBBHi8WRKQqnat" -O movie.sql
 
 # Download e instalação do tpch-dbgen
 WORKDIR /app/tpch-pgsql
