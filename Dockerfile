@@ -71,6 +71,5 @@ RUN pg_ctlcluster 13 main start \
     && psql -c "GRANT ALL PRIVILEGES ON DATABASE banco TO aluno;" \
     && pg_ctlcluster 13 main stop
 
-
 # Comando para iniciar o PostgreSQL. O segundo comando garante que o contêiner fique em execução.
 CMD pg_ctlcluster 13 main start && tail -f /dev/null
