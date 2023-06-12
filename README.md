@@ -20,7 +20,7 @@ docker build -t tp3 .
 docker run -p 5433:5432 -p 8888:8888 -v $(pwd)/notebook/:/app/notebook tp3
 ```
 
-## 4 - Para acessar o jupyter, entre no contêiner, mude o usuário para o informado no dockerfile e acesse a pasta notebook (app/notebook);
+## 4 - Para acessar o jupyter, entre no contêiner, mude o usuário para o informado no dockerfile (a senha também está no dockerfile) e acesse a pasta notebook (app/notebook);
 
 ```bash
 su usuário
