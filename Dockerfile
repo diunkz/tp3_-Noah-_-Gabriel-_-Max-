@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     python3-pip \
     wget \
+    nano \
     unzip \
     postgresql-13 \
     fdisk \
@@ -51,7 +52,10 @@ RUN wget -q https://github.com/electrum/tpch-dbgen/archive/32f1c1b92d1664dba542e
     && mv tpch-dbgen-32f1c1b92d1664dba542e927d23d86ffa57aa253 tpch-dbgen \
     && rm tpch-dbgen.zip \
     && chmod -R ugo+w /app
-   
+
+# alterando o método de autenticação de peer para md5
+RUN sed -i 's/local   all             all                                     peer/local   all             all                                     md5/' /etc/postgresql/13/main/pg_hba.conf
+
 # Configuração do PostgreSQL
 RUN echo 'postgres:postgres' | chpasswd
 WORKDIR /app
